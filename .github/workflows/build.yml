@@ -1,0 +1,31 @@
+name: Build .exe on Windows
+
+on:
+  push:
+    branches:
+      - main  # Zmień to na główną gałąź repozytorium
+
+jobs:
+  build:
+    runs-on: windows-latest  # Użyj systemu Windows
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11  # Wybierz odpowiednią wersję Pythona
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Build .exe
+      run: python build.py  # Uruchom skrypt budowania .exe
+
+    - name: Upload .exe artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: my-exe  # Nazwa archiwum
+        path: dist/main.exe  # Ścieżka do pliku .exe
