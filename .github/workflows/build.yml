@@ -41,8 +41,10 @@ jobs:
 
     - name: Commit and push .exe to repo
       run: |
+        git config --global user.email "kacperjcb@gmail.com"
+        git config --global user.name "Kacper Glowacki"
         git add main.exe
         git commit -m "Add main.exe"
         git push --set-upstream origin main
       env:
-       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
