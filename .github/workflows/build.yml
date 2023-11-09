@@ -41,11 +41,8 @@ jobs:
 
     - name: Commit and push .exe to repo
       run: |
-        git config user.email "kacperjcb@gmail.com"
-        git config user.name "Kacper Glowacki"
-        git remote add origin https://github.com/kacperjcb/Python2
         git add main.exe
         git commit -m "Add main.exe"
         git push --set-upstream origin main
       env:
-        GH_TOKEN: ${{ secrets.SECRET_GITHUB_TOKEN }}
+       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
