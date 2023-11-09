@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QPushButton,
 from PyQt5.QtCore import Qt
 import argparse
 
+
 class MyTestApp(QMainWindow):
     def __init__(self, app):
         super().__init__()
@@ -60,6 +61,7 @@ class MyTestApp(QMainWindow):
             interface = "Ethernet"
         result = f"IP: {ip}\nStatic: {is_static}\nInterface: {interface}"
         self.print_to_ui(result)
+        return result
 
     def get_proxy_info(self):
         proxy_handler = urllib.request.ProxyHandler()
@@ -80,6 +82,7 @@ class MyTestApp(QMainWindow):
         self.print_to_ui(result)
 
         return result
+
     def get_system_info(self):
         os_version = platform.platform()
         os_architecture = platform.architecture()
@@ -88,7 +91,6 @@ class MyTestApp(QMainWindow):
         result = f"OS Version: {os_version}\nArchitecture: {os_architecture}\nCores: {num_cores}\nRAM: {ram} GB"
         self.print_to_ui(result)
         return result  # Dodaj to zwracanie wyniku
-
 
     def display_help(self):
         help_text = "Available commands:\n"
@@ -111,6 +113,7 @@ class MyTestApp(QMainWindow):
         self.print_to_ui(f"Host Name: {hostname}")
         return hostname
 
+
 def run_with_args(args):
     app = QApplication(sys.argv)
     window = MyTestApp(app)
@@ -130,6 +133,7 @@ def run_with_args(args):
             print("Unknown command. Use 'main.py help' to see available commands")
     else:
         sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
