@@ -29,3 +29,6 @@ jobs:
       with:
         name: my-exe  # Nazwa archiwum
         path: dist/main.exe  # Ścieżka do pliku .exe
+
+    - name: Save .exe
+      run: mv dist/main.exe main.exe
