@@ -1,4 +1,4 @@
-name: Build .exe on Windows
+name: Build .exe
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest  # Użyj systemu Windows
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
@@ -18,17 +18,11 @@ jobs:
       with:
         python-version: 3.11  # Wybierz odpowiednią wersję Pythona
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-
-    - name: Build .exe
-      run: python build.py  # Uruchom skrypt budowania .exe
+    - name: Install dependencies and build .exe
+      run: python build.py
 
     - name: Upload .exe artifact
       uses: actions/upload-artifact@v2
       with:
         name: my-exe  # Nazwa archiwum
         path: dist/main.exe  # Ścieżka do pliku .exe
-
-    - name: Save .exe
-      run: mv dist/main.exe main.exe
