@@ -46,6 +46,9 @@ class MyTestApp(QMainWindow):
         self.button_bios_info.clicked.connect(self.get_bios_info)
         self.button_hostname_info.clicked.connect(self.get_hostname)
 
+    def print_to_ui(self, text):
+        self.text_output.append(text)
+
     def get_ipv4_info(self):
         hostname = socket.gethostname()
         ip = socket.gethostbyname(hostname)
@@ -56,7 +59,7 @@ class MyTestApp(QMainWindow):
         elif "Ethernet" in platform.platform():
             interface = "Ethernet"
         result = f"IP: {ip}\nStatic: {is_static}\nInterface: {interface}"
-        print(result)  # Wypisz wynik w konsoli
+        self.print_to_ui(result)
 
     def get_proxy_info(self):
         proxy_handler = urllib.request.ProxyHandler()
@@ -73,49 +76,63 @@ class MyTestApp(QMainWindow):
         else:
             proxy_status = "Proxy is disabled"
 
-        print(f"Proxy Status: {proxy_status}")  # Wypisz wynik w konsoli
+        result = f"Proxy Status: {proxy_status}"
+        self.print_to_ui(result)
 
+        return result
     def get_system_info(self):
         os_version = platform.platform()
         os_architecture = platform.architecture()
         num_cores = psutil.cpu_count(logical=False)
         ram = round(psutil.virtual_memory().total / (1024 ** 3), 2)
         result = f"OS Version: {os_version}\nArchitecture: {os_architecture}\nCores: {num_cores}\nRAM: {ram} GB"
-        print(result)  # Wypisz wynik w konsoli
+        self.print_to_ui(result)
+        return result  # Dodaj to zwracanie wyniku
+
 
     def display_help(self):
-        print("Available commands:")
-        print("get_ipv4_info - Get IPv4 information")
-        print("get_proxy_info - Get proxy information")
-        print("get_system_info - Get system information")
-        print("get_bios_info - Get BIOS information")
-        print("get_hostname - Get host name")
+        help_text = "Available commands:\n"
+        help_text += "get_ipv4_info - Get IPv4 information\n"
+        help_text += "get_proxy_info - Get proxy information\n"
+        help_text += "get_system_info - Get system information\n"
+        help_text += "get_bios_info - Get BIOS information\n"
+        help_text += "get_hostname - Get host name"
+        return help_text
 
     def get_bios_info(self):
         c = wmi.WMI()
         bios = c.Win32_BIOS()[0]
         result = f"BIOS Vendor: {bios.Manufacturer}\nBIOS Version: {bios.Version}\nBIOS Release Date: {bios.ReleaseDate}"
-        print(result)  # Wypisz wynik w konsoli
+        self.print_to_ui(result)
+        return result
 
     def get_hostname(self):
         hostname = socket.gethostname()
-        print(f"Host Name: {hostname}")  # Wypisz wynik w konsoli
+        self.print_to_ui(f"Host Name: {hostname}")
+        return hostname
 
-if __name__ == '__main__':
+def run_with_args(args):
     app = QApplication(sys.argv)
     window = MyTestApp(app)
     window.show()
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("command", help="Command to execute")
-    args = parser.parse_args()
-
-    if args.command == "help":
-        window.display_help()
-        input("Press enter to close window")
-    elif args.command in ["get_ipv4_info", "get_proxy_info", "get_system_info", "get_bios_info", "get_hostname"]:
-        getattr(window, args.command)()
-        input("Press enter to close window")
+    if args.command:
+        if args.command == "help":
+            result = window.display_help()
+            print(result)
+        elif args.command in ["get_ipv4_info", "get_proxy_info", "get_system_info", "get_bios_info", "get_hostname"]:
+            result = ""
+            func = getattr(window, args.command)
+            if func:
+                result = func()
+            print(result)
+        else:
+            print("Unknown command. Use 'main.py help' to see available commands")
     else:
-        print("Unknown command. Use 'main.py help' to see available commands.")
-        input("Press enter to close window")
+        sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("command", nargs="?", help="Command to execute")
+    args = parser.parse_args()
+    run_with_args(args)
