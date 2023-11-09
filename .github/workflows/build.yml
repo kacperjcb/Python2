@@ -1,13 +1,16 @@
-name: Build .exe
+name: Build .exe on Windows
 
 on:
+  schedule:
+    - cron: "0 0 * * 0"  # Uruchamiaj raz w tygodniu o północy w niedzielę
   push:
     branches:
-      - main  # Zmień to na główną gałąź repozytorium
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
@@ -16,13 +19,30 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.11  # Wybierz odpowiednią wersję Pythona
+        python-version: 3.11
 
-    - name: Install dependencies and build .exe
-      run: python build.py
+    - name: Install PyInstaller  # Dodaj ten etap
+      run: pip install pyinstaller
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Build .exe
+      run: pyinstaller main.py --onefile
 
     - name: Upload .exe artifact
       uses: actions/upload-artifact@v2
       with:
-        name: my-exe  # Nazwa archiwum
-        path: dist/main.exe  # Ścieżka do pliku .exe
+        name: my-exe
+        path: dist/main.exe
+
+    - name: Save .exe
+      run: mv dist/main.exe main.exe
+
+    - name: Commit and push .exe to repo
+      run: |
+        git config user.email "you@example.com"
+        git config user.name "Your Name"
+        git add main.exe
+        git commit -m "Add main.exe"
+        git push
