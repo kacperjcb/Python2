@@ -37,7 +37,11 @@ jobs:
         path: dist/main.exe
 
     - name: Save .exe
-      run: mv dist/main.exe main.exe
+      run: |
+        if (Test-Path -Path "main.exe") {
+          Remove-Item -Path "main.exe" -Force
+        }
+        Move-Item -Path "dist/main.exe" -Destination "main.exe"
 
     - name: Commit and push .exe to repo
       run: |
